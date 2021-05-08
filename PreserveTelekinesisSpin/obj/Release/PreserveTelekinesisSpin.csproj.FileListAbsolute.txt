@@ -1,0 +1,7 @@
+C:\Users\nikon\RiderProjects\PreserveTelekinesisSpin\PreserveTelekinesisSpin\obj\Release\PreserveTelekinesisSpin.csprojResolveAssemblyReference.cache
+D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\PreserveTelekinesisSpin\Level_PreserveTelekinesisSpin.json
+D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\PreserveTelekinesisSpin\manifest.json
+D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\PreserveTelekinesisSpin\PreserveTelekinesisSpin.dll
+D:\Steam\steamapps\common\Blade & Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\PreserveTelekinesisSpin\PreserveTelekinesisSpin.pdb
+C:\Users\nikon\RiderProjects\PreserveTelekinesisSpin\PreserveTelekinesisSpin\obj\Release\PreserveTelekinesisSpin.dll
+C:\Users\nikon\RiderProjects\PreserveTelekinesisSpin\PreserveTelekinesisSpin\obj\Release\PreserveTelekinesisSpin.pdb
