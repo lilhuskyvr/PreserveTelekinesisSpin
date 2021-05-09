@@ -38,22 +38,54 @@ namespace PreserveTelekinesisSpin.Patch
         }
 
         [HarmonyPatch(typeof(SpellTelekinesis))]
+        [HarmonyPatch("TryCatch")]
+        private static class SpellTelekinesisTryCatchPatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(SpellTelekinesis __instance)
+            {
+                var item = __instance.catchedHandle.item;
+                
+                if (__instance.catchedHandle.item != null)
+                {
+                    var customJointItem = item.gameObject.GetComponent<CustomJointItem>();
+                    if (customJointItem != null)
+                    {
+                        Object.Destroy(customJointItem);
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(SpellTelekinesis))]
         [HarmonyPatch("TryRelease")]
         private static class SpellTelekinesisTryReleasePatch
         {
             private static Handle _catchedHandle;
-            private static ConfigurableJoint _configurableJoint;
 
 
             [HarmonyPrefix]
             private static void Prefix(bool tryThrow, SpellTelekinesis __instance)
             {
-                BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                                         | BindingFlags.Static;
-                FieldInfo field = __instance.GetType().GetField("joint", bindFlags);
-                ConfigurableJoint joint = field.GetValue(__instance) as ConfigurableJoint;
-                _configurableJoint = Object.Instantiate(joint);
-                _catchedHandle = __instance.catchedHandle;
+                var item = __instance.catchedHandle.item;
+
+                if (item != null)
+                {
+                    
+                    BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                                             | BindingFlags.Static;
+                    FieldInfo field = __instance.GetType().GetField("joint", bindFlags);
+                    ConfigurableJoint joint = field.GetValue(__instance) as ConfigurableJoint;
+
+                    if (joint.targetAngularVelocity != Vector3.zero)
+                    {
+                        var customJointItem = item.gameObject.AddComponent<CustomJointItem>();
+
+                        customJointItem.joint = Object.Instantiate(joint);
+
+                        _catchedHandle = __instance.catchedHandle;
+                    }
+                }
             }
 
             [HarmonyPostfix]
@@ -61,7 +93,9 @@ namespace PreserveTelekinesisSpin.Patch
             {
                 if (_catchedHandle != null)
                 {
-                    _catchedHandle.OnTelekinesisGrab(__instance);
+                    _catchedHandle.item.SetCenterOfMass(_catchedHandle.transform.localPosition +
+                                                        new Vector3(0.0f, _catchedHandle.GetDefaultAxisLocalPosition(),
+                                                            0.0f));
                 }
             }
         }
