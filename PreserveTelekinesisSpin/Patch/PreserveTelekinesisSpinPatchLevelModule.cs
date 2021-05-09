@@ -45,7 +45,7 @@ namespace PreserveTelekinesisSpin.Patch
             private static void Postfix(SpellTelekinesis __instance)
             {
                 var item = __instance.catchedHandle.item;
-                
+
                 if (__instance.catchedHandle.item != null)
                 {
                     var customJointItem = item.gameObject.GetComponent<CustomJointItem>();
@@ -71,15 +71,20 @@ namespace PreserveTelekinesisSpin.Patch
 
                 if (item != null)
                 {
-                    
+                    var customJointItem = item.gameObject.GetComponent<CustomJointItem>();
+                    if (customJointItem != null)
+                    {
+                        Object.Destroy(customJointItem);
+                    }
+
                     BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
                                              | BindingFlags.Static;
                     FieldInfo field = __instance.GetType().GetField("joint", bindFlags);
                     ConfigurableJoint joint = field.GetValue(__instance) as ConfigurableJoint;
 
-                    if (joint.targetAngularVelocity != Vector3.zero)
+                    if (__instance.spinMode)
                     {
-                        var customJointItem = item.gameObject.AddComponent<CustomJointItem>();
+                        customJointItem = item.gameObject.AddComponent<CustomJointItem>();
 
                         customJointItem.joint = Object.Instantiate(joint);
 
@@ -93,36 +98,23 @@ namespace PreserveTelekinesisSpin.Patch
             {
                 if (_catchedHandle != null)
                 {
+                    foreach (CollisionHandler collisionHandler in _catchedHandle.item.collisionHandlers)
+                        collisionHandler.SetPhysicModifier(_catchedHandle, 3, __instance.gravity ? 1f : 0.0f, 1f,
+                            __instance.drag, __instance.angularDrag);
+                    _catchedHandle.item.rb.sleepThreshold = 0.0f;
+                    _catchedHandle.item.StopThrowing();
+                    _catchedHandle.item.StopFlying();
+                    _catchedHandle.item.ResetColliderCollision();
+                    _catchedHandle.item.ResetRagdollCollision();
+                    _catchedHandle.item.ResetObjectCollision();
+                    _catchedHandle.item.SetColliderAndMeshLayer(GameManager.GetLayer(LayerName.MovingObject));
+                    _catchedHandle.item.rb.collisionDetectionMode = Catalog.gameData.collisionDetection.telekinesis;
                     _catchedHandle.item.SetCenterOfMass(_catchedHandle.transform.localPosition +
                                                         new Vector3(0.0f, _catchedHandle.GetDefaultAxisLocalPosition(),
                                                             0.0f));
+                    _catchedHandle.item.isTelekinesisGrabbed = true;
                 }
             }
         }
-
-        // [HarmonyPatch(typeof(SpellTelekinesis))]
-        // [HarmonyPatch("SetSpinMode")]
-        // private static class SpellTelekinesisSetSpinModePatch
-        // {
-        //
-        //     [HarmonyPostfix]
-        //     private static void Postfix(bool active, SpellTelekinesis __instance)
-        //     {
-        //         if (active)
-        //         {
-        //             Debug.Log("set spin mode");
-        //             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-        //                                      | BindingFlags.Static;
-        //             FieldInfo field = __instance.GetType().GetField("joint", bindFlags);
-        //             ConfigurableJoint joint = field.GetValue(__instance) as ConfigurableJoint;
-        //             joint.angularXDrive = new JointDrive()
-        //             {
-        //                 positionSpring = 0.0f,
-        //                 positionDamper = 10f,
-        //                 maximumForce = __instance.rotationMaxForce
-        //             };
-        //         }
-        //     }
-        // }
     }
 }
