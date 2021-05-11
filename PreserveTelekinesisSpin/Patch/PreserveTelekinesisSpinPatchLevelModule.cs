@@ -44,6 +44,8 @@ namespace PreserveTelekinesisSpin.Patch
             [HarmonyPostfix]
             private static void Postfix(SpellTelekinesis __instance)
             {
+                if (__instance.catchedHandle == null)
+                    return;
                 var item = __instance.catchedHandle.item;
 
                 if (__instance.catchedHandle.item != null)
@@ -67,6 +69,8 @@ namespace PreserveTelekinesisSpin.Patch
             [HarmonyPrefix]
             private static void Prefix(bool tryThrow, SpellTelekinesis __instance)
             {
+                if (__instance.catchedHandle == null)
+                    return;
                 var item = __instance.catchedHandle.item;
 
                 if (item != null)
