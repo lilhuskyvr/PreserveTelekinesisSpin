@@ -112,7 +112,7 @@ namespace PreserveTelekinesisSpin.Patch
                     _catchedHandle.item.ResetRagdollCollision();
                     _catchedHandle.item.ResetObjectCollision();
                     _catchedHandle.item.SetColliderAndMeshLayer(GameManager.GetLayer(LayerName.MovingObject));
-                    _catchedHandle.item.rb.collisionDetectionMode = Catalog.gameData.collisionDetection.telekinesis;
+                    _catchedHandle.item.rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
                     _catchedHandle.item.SetCenterOfMass(_catchedHandle.transform.localPosition +
                                                         new Vector3(0.0f, _catchedHandle.GetDefaultAxisLocalPosition(),
                                                             0.0f));
